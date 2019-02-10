@@ -65,7 +65,7 @@
                 android:layout_margin="16dp">
 
                 <Spinner
-                    android:id="@+id/from_month_spinner"
+                    android:id="@+id/start_month_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -73,7 +73,7 @@
                     android:prompt="@string/mmm" />
 
                 <Spinner
-                    android:id="@+id/from_year_spinner"
+                    android:id="@+id/start_year_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -89,7 +89,7 @@
                 android:layout_margin="16dp">
 
                 <Spinner
-                    android:id="@+id/to_month_spinner"
+                    android:id="@+id/end_month_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -97,7 +97,7 @@
                     android:prompt="@string/mmm" />
 
                 <Spinner
-                    android:id="@+id/to_year_spinner"
+                    android:id="@+id/end_year_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -13,9 +13,9 @@
         <com.github.florent37.diagonallayout.DiagonalLayout
             android:id="@+id/florent_bg_top"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="150dp"
             android:elevation="10dp"
-            app:diagonal_angle="10"
+            app:diagonal_angle="6"
             app:diagonal_direction="left"
             app:diagonal_position="bottom">
 
@@ -30,12 +30,12 @@
                 android:id="@+id/details_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="20dp">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/view2"
                     android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_height="85dp"
                     android:layout_marginLeft="32dp"
 
                     android:elevation="12dp"
@@ -61,20 +61,53 @@
                     android:gravity="center_vertical">
 
                     <TextView
+                        android:id="@+id/name_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/name"
-                        android:textSize="16sp"
-                        android:layout_margin="8dp"
+                        android:textSize="13sp"
+                        android:layout_margin="4dp"
                         android:textColor="#EEEEEE"/>
 
                     <TextView
+                        android:id="@+id/email_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/email"
-                        android:layout_margin="8dp"
-                        android:textSize="16sp"
+                        android:layout_margin="4dp"
+                        android:textSize="13sp"
                         android:textColor="#EEEEEE"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/organization_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/organization"
+                            android:textSize="13sp"
+                            android:layout_margin="4dp"
+                            android:textColor="#EEEEEE"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" | "
+                            android:textSize="13sp"
+                            android:layout_margin="4dp"/>
+
+                        <TextView
+                            android:id="@+id/location_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/location"
+                            android:textSize="13sp"
+                            android:layout_margin="4dp"
+                            android:textColor="#EEEEEE"/>
+
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
@@ -104,9 +137,9 @@
         <com.github.florent37.diagonallayout.DiagonalLayout
             android:id="@+id/florent_bg_bottom"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="70dp"
             android:elevation="10dp"
-            app:diagonal_angle="10"
+            app:diagonal_angle="6"
             app:diagonal_direction="right"
             app:diagonal_position="top"
             android:layout_alignParentBottom="true">

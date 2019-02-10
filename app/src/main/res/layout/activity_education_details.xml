@@ -35,22 +35,22 @@
                 android:text="@string/educational_details" />
 
             <EditText
-                android:id="@+id/university_edit_text"
+                android:id="@+id/organization_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:hint="@string/university" />
+                android:hint="@string/organization" />
 
             <EditText
-                android:id="@+id/field_edit_text"
+                android:id="@+id/degree_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:hint="@string/field" />
+                android:hint="@string/degree" />
 
             <EditText
                 android:id="@+id/location_edit_text"
@@ -62,7 +62,7 @@
                 android:hint="@string/location" />
 
             <Spinner
-                android:id="@+id/from_year_spinner"
+                android:id="@+id/start_year_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/year_items"
@@ -70,7 +70,7 @@
                 android:layout_margin="16dp"/>
 
             <Spinner
-                android:id="@+id/to_year_spinner"
+                android:id="@+id/end_year_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/year_items"

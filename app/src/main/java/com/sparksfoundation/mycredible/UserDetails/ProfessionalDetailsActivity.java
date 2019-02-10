@@ -1,33 +1,171 @@
 package com.sparksfoundation.mycredible.UserDetails;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.sparksfoundation.mycredible.ProfessionalDetailsPOJOClasses.ProfessionalDetails;
+import com.sparksfoundation.mycredible.ProfessionalDetailsPOJOClasses.ProfessionalDetailsData;
 import com.sparksfoundation.mycredible.R;
+import com.sparksfoundation.mycredible.Remote.APIUtils;
+import com.sparksfoundation.mycredible.Remote.UserService;
 import com.sparksfoundation.mycredible.UserHomeActivity;
+
+import java.security.CodeSigner;
+
+import okio.DeflaterSink;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.sparksfoundation.mycredible.LoginActivity.MY_PREF;
 
 public class ProfessionalDetailsActivity extends AppCompatActivity {
 
     Button saveButton;
+    EditText organizationEditText, designationEditText;
+    Spinner startMonthSpinner, startYearSpinner, endMonthSpinner, endYearSpinner;
+    String organization, designation;
+    String startMonth, startYear, endMonth, endYear;
+    String startDate, endDate;
+
+    UserService userService;
+
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_professional_details);
 
+        organizationEditText = findViewById(R.id.organization_edit_text);
+        designationEditText = findViewById(R.id.designation_edit_text);
+        startMonthSpinner = findViewById(R.id.start_month_spinner);
+        startYearSpinner = findViewById(R.id.start_year_spinner);
+        endMonthSpinner = findViewById(R.id.end_month_spinner);
+        endYearSpinner = findViewById(R.id.end_year_spinner);
+
+        userService = APIUtils.getUserService();
+
+        SharedPreferences prefs = getSharedPreferences(MY_PREF, MODE_PRIVATE);
+        userId = prefs.getInt("id", 0);
+
+        organizationEditText.setText("VIT");
+        designationEditText.setText("Student");
+
+        final String isUpdate = getIntent().getStringExtra("isUpdate");
+
+        if (isUpdate == null)
+            getSupportActionBar().setTitle("Set Professional Details");
+        else {
+            getSupportActionBar().setTitle("Edit Professional Details");
+            getProfessionalDetails();
+        }
+
         saveButton = findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                organization = organizationEditText.getText().toString().trim();
+                designation = designationEditText.getText().toString().trim();
+                startMonth = startMonthSpinner.getSelectedItem().toString();
+                startYear = startYearSpinner.getSelectedItem().toString();
+                endMonth = endMonthSpinner.getSelectedItem().toString();
+                endYear = endYearSpinner.getSelectedItem().toString();
+
+                startDate = startMonth + ", " + startYear;
+                endDate = endMonth + ", " + endYear;
+
+                ProfessionalDetails professionalDetails = new ProfessionalDetails(endDate, organization, designation, startDate);
+
+                if (isUpdate == null)
+                    setProfessionalDetails(professionalDetails);
+                else {
+                    updateProfessionalDetails(professionalDetails);
+                }
+            }
+        });
+    }
+
+    public void getProfessionalDetails()
+    {
+        Call<ProfessionalDetailsData> call = userService.getProfessionalDetails(userId);
+        call.enqueue(new Callback<ProfessionalDetailsData>() {
+            @Override
+            public void onResponse(Call<ProfessionalDetailsData> call, Response<ProfessionalDetailsData> response) {
+                if(response.body() != null) {
+                    organizationEditText.setText(response.body().getData().getOrganisation());
+                    designationEditText.setText(response.body().getData().getDesignation());
+                    startMonthSpinner.setSelection(getIndex(startMonthSpinner, response.body().getData().getStart_date().substring(0, 3)));
+                    startYearSpinner.setSelection(getIndex(startYearSpinner, response.body().getData().getStart_date().substring(5)));
+                    endMonthSpinner.setSelection(getIndex(endMonthSpinner, response.body().getData().getEnd_date().substring(0, 3)));
+                    endYearSpinner.setSelection(getIndex(endYearSpinner, response.body().getData().getEnd_date().substring(5)));
+                } else {
+                    showToast("Professional Details Response Empty", Toast.LENGTH_LONG);
+                }
+            }
+            @Override
+            public void onFailure(Call<ProfessionalDetailsData> call, Throwable t) {
+                showToast("Response Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    public void setProfessionalDetails(ProfessionalDetails professionalDetails)
+    {
+        Call<ProfessionalDetailsData> call = userService.setProfessionalDetails(userId, professionalDetails);
+        call.enqueue(new Callback<ProfessionalDetailsData>() {
+            @Override
+            public void onResponse(Call<ProfessionalDetailsData> call, Response<ProfessionalDetailsData> response) {
+                ProfessionalDetailsData personalDetailsData = new ProfessionalDetailsData();
+                personalDetailsData.setData(response.body().getData());
+
                 Intent intent = new Intent(ProfessionalDetailsActivity.this, EducationDetailsActivity.class);
+                intent.putExtra("id", userId);
                 finish();
                 startActivity(intent);
             }
+
+            @Override
+            public void onFailure(Call<ProfessionalDetailsData> call, Throwable t) {
+                showToast("Set Professional details Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
         });
+    }
+
+    public void updateProfessionalDetails(final ProfessionalDetails professionalDetails)
+    {
+        Call<ProfessionalDetailsData> call = userService.updateProfessionalDetails(userId, professionalDetails);
+        call.enqueue(new Callback<ProfessionalDetailsData>() {
+            @Override
+            public void onResponse(Call<ProfessionalDetailsData> call, Response<ProfessionalDetailsData> response) {
+                showToast("Professional Details Updated", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(ProfessionalDetailsActivity.this, UserHomeActivity.class);
+                intent.putExtra("id", userId);
+                finish();
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<ProfessionalDetailsData> call, Throwable t) {
+                showToast("Update Professional details Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    private int getIndex(Spinner spinner, String myString){
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public void showToast(String msg, int length)

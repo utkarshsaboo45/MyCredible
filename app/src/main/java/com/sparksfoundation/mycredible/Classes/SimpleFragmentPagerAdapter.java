@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.sparksfoundation.mycredible.Fragments.AchievementsFragment;
+import com.sparksfoundation.mycredible.Fragments.PersonalFragment;
 import com.sparksfoundation.mycredible.Fragments.EducationFragment;
 import com.sparksfoundation.mycredible.Fragments.ProfessionalFragment;
 
@@ -24,7 +24,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter{
             case 1 :
                 return new ProfessionalFragment();
             case 2:
-                return new AchievementsFragment();
+                return new PersonalFragment();
             default:
                 return null;
         }
@@ -38,7 +38,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter{
             case 1:
                 return "Professional";
             case 2:
-                return "Achievements";
+                return "Personal";
             default:
                 return null;
         }

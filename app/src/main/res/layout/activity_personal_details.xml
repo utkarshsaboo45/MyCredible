@@ -40,14 +40,14 @@
                 android:layout_marginRight="16dp"
                 android:hint="@string/name" />
 
-            <EditText
-                android:id="@+id/email_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:hint="@string/email" />
+            <!--<EditText-->
+                <!--android:id="@+id/email_edit_text"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:hint="@string/email" />-->
 
             <EditText
                 android:id="@+id/mobile_edit_text"
@@ -72,8 +72,17 @@
                 android:id="@+id/links_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
                 android:hint="@string/links" />
+
+            <EditText
+                android:id="@+id/skills_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:hint="@string/add_skill" />
 
         </LinearLayout>
 

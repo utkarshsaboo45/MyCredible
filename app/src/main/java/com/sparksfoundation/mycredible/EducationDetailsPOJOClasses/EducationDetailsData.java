@@ -1,11 +1,8 @@
-package com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses;
+package com.sparksfoundation.mycredible.EducationDetailsPOJOClasses;
 
-public class PersonalDetailsData
+public class EducationDetailsData
 {
     private Data data;
-
-    public PersonalDetailsData() {
-    }
 
     public Data getData ()
     {

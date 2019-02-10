@@ -1,6 +1,7 @@
 package com.sparksfoundation.mycredible;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,7 +36,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String url = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,public-profile-url,picture-url,email-address,picture-urls::(original))";
     //private static final String url2 = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name)";
-    private String userId, userEmail;
+
+    public static final String MY_PREF = "MyPreference";
+
+    private String userEmail;
+    private int userId;
 
     private String email, password;
 
@@ -58,9 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
 
-        email = emailEditText.getText().toString().trim();
-        password = passwordEditText.getText().toString().trim();
-
         userService = APIUtils.getUserService();
 
         serverTest();
@@ -68,6 +70,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                email = emailEditText.getText().toString().trim();
+                password = passwordEditText.getText().toString().trim();
+
                 if(email != null && password != null)
                 {
                     User user = new User(email, password);
@@ -83,12 +89,15 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(LoginActivity.this, PersonalDetailsActivity.class);
-                //startActivity(intent);
+
+                email = emailEditText.getText().toString().trim();
+                password = passwordEditText.getText().toString().trim();
+
+
                 if(email != null && password != null)
                 {
                     User user = new User(email, password);
-                    signUpUser(user);
+                    signUpUser(user, email);
                 }
                 else
                 {
@@ -189,15 +198,26 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<LoginSignupData>() {
             @Override
             public void onResponse(Call<LoginSignupData> call, Response<LoginSignupData> response) {
-                userId = response.body().getData().getId();
+                if(response.body().getData() == null )
+                {
+                    showToast(getString(R.string.toast_no_such_user), Toast.LENGTH_SHORT);
+                    return;
+                }
+
+                userId = Integer.parseInt(response.body().getData().getId());
                 userEmail = response.body().getData().getEmail();
+
+                showToast("Thanks for joining us.\nYour unique ID is: " + userId + ".\nPlease fill the details to continue", Toast.LENGTH_LONG);
+
+                SharedPreferences.Editor editor = getSharedPreferences(MY_PREF, MODE_PRIVATE).edit();
+                editor.putString("email", userEmail);
+                editor.putInt("id", userId);
+                editor.apply();
 
                 Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
                 intent.putExtra("id", userId);
-                intent.putExtra("email", userEmail);
-                startActivity(intent);
 
-                showToast(response.body().getData().getId(), Toast.LENGTH_SHORT);
+                startActivity(intent);
             }
 
             @Override
@@ -207,21 +227,23 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void signUpUser(User user)
+    public void signUpUser(final User user, final String email)
     {
         Call<LoginSignupData> call = userService.addUser(user);
         call.enqueue(new Callback<LoginSignupData>() {
             @Override
             public void onResponse(Call<LoginSignupData> call, Response<LoginSignupData> response) {
-                userId = response.body().getData().getId();
+                userId = Integer.parseInt(response.body().getData().getId());
                 userEmail = response.body().getData().getEmail();
+
+                SharedPreferences.Editor editor = getSharedPreferences(MY_PREF, MODE_PRIVATE).edit();
+                editor.putString("email", userEmail);
+                editor.putInt("id", userId);
+                editor.apply();
 
                 Intent intent = new Intent(LoginActivity.this, PersonalDetailsActivity.class);
                 intent.putExtra("id", userId);
-                intent.putExtra("email", userEmail);
                 startActivity(intent);
-
-                showToast("Signup Successful: " + response.body().getData().toString(), Toast.LENGTH_SHORT);
             }
 
             @Override
