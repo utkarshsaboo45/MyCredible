@@ -63,6 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
 
+//        emailEditText.setText("utkarsh@gmail.com");
+//        passwordEditText.setText("123456");
+
         userService = APIUtils.getUserService();
 
         serverTest();
@@ -207,8 +210,6 @@ public class LoginActivity extends AppCompatActivity {
                 userId = Integer.parseInt(response.body().getData().getId());
                 userEmail = response.body().getData().getEmail();
 
-                showToast("Thanks for joining us.\nYour unique ID is: " + userId + ".\nPlease fill the details to continue", Toast.LENGTH_LONG);
-
                 SharedPreferences.Editor editor = getSharedPreferences(MY_PREF, MODE_PRIVATE).edit();
                 editor.putString("email", userEmail);
                 editor.putInt("id", userId);
@@ -235,6 +236,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<LoginSignupData> call, Response<LoginSignupData> response) {
                 userId = Integer.parseInt(response.body().getData().getId());
                 userEmail = response.body().getData().getEmail();
+
+                showToast("Thanks for joining us.\nYour unique ID is: " + userId + ".\nPlease fill the details to continue", Toast.LENGTH_LONG);
 
                 SharedPreferences.Editor editor = getSharedPreferences(MY_PREF, MODE_PRIVATE).edit();
                 editor.putString("email", userEmail);

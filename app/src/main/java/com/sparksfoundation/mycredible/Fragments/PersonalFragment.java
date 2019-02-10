@@ -78,11 +78,13 @@ public class PersonalFragment extends Fragment {
         call.enqueue(new Callback<PersonalDetailsData>() {
             @Override
             public void onResponse(Call<PersonalDetailsData> call, Response<PersonalDetailsData> response) {
-                nameTextView.setText(response.body().getData().getName());
-                mobileTextView.setText(response.body().getData().getMobile_no());
-                locationTextView.setText(response.body().getData().getLocation());
-                linksTextView.setText(response.body().getData().getLinks());
-                skillsTextView.setText(response.body().getData().getSkills());
+                if(response.body() != null) {
+                    nameTextView.setText(response.body().getData().getName());
+                    mobileTextView.setText(response.body().getData().getMobile_no());
+                    locationTextView.setText(response.body().getData().getLocation());
+                    linksTextView.setText(response.body().getData().getLinks());
+                    skillsTextView.setText(response.body().getData().getSkills());
+                }
             }
 
             @Override

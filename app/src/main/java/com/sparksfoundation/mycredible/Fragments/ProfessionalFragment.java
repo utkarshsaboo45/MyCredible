@@ -78,10 +78,12 @@ public class ProfessionalFragment extends Fragment {
         call.enqueue(new Callback<ProfessionalDetailsData>() {
             @Override
             public void onResponse(Call<ProfessionalDetailsData> call, Response<ProfessionalDetailsData> response) {
-                organizationTextView.setText(response.body().getData().getOrganisation());
-                designationTextView.setText(response.body().getData().getDesignation());
-                startDateTextView.setText(response.body().getData().getStart_date());
-                endDateTextView.setText(response.body().getData().getEnd_date());
+                if(response.body() != null) {
+                    organizationTextView.setText(response.body().getData().getOrganisation());
+                    designationTextView.setText(response.body().getData().getDesignation());
+                    startDateTextView.setText(response.body().getData().getStart_date());
+                    endDateTextView.setText(response.body().getData().getEnd_date());
+                }
             }
 
             @Override

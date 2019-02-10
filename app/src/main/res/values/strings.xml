@@ -23,7 +23,11 @@
     <string name="degree">Choose Field</string>
     <string name="start_year">Start Year</string>
     <string name="end_year">End Year</string>
+    <string name="start">Start Date</string>
+    <string name="end">End Date</string>
     <string name="add_certificate">Add your Certificate</string>
+    <string name="welcome_message">The Sparks Foundation welcomes you!</string>
+    <string name="login_or_signup_message">Please login or signup to proceed!</string>
 
     <string name="edu">Education</string>
     <string name="prof">Professional</string>
@@ -39,6 +43,7 @@
     <string name="action_login">Login</string>
     <string name="action_signup">Sign Up</string>
     <string name="action_logout">Logout</string>
+    <string name="action_delete_account">Delete Account</string>
     <string name="action_update_details">Update Details</string>
 
     <!--Common Toasts-->

@@ -1,21 +1,36 @@
 package com.sparksfoundation.mycredible.UserDetails;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses.PersonalDetails;
 import com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses.PersonalDetailsData;
+import com.sparksfoundation.mycredible.ProfilePicPOJOClasses.Photo;
 import com.sparksfoundation.mycredible.R;
 import com.sparksfoundation.mycredible.Remote.APIUtils;
 import com.sparksfoundation.mycredible.Remote.UserService;
+import com.sparksfoundation.mycredible.StatusMessage;
 import com.sparksfoundation.mycredible.UserHomeActivity;
+import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,8 +40,17 @@ import static com.sparksfoundation.mycredible.LoginActivity.MY_PREF;
 
 public class PersonalDetailsActivity extends AppCompatActivity {
 
+    final private String imageUri = "content://media/internal/images/media";
+    final private String imageUrl = "http://139.59.65.145:9090/user/personaldetail/profilepic/";
+
     private Button saveButton;
     private EditText nameEditText, emailEditText, mobileEditText, locationEditText, linksEditText, skillsEditText;
+    private ImageView userProfilePic;
+
+    private Bitmap profilePicBitmap;
+    private ByteArrayOutputStream baos;
+    private byte[] imageByteArray;
+    private String encodedImage;
 
     private String name, email, mobile, location, links, skills;
 
@@ -46,12 +70,21 @@ public class PersonalDetailsActivity extends AppCompatActivity {
         linksEditText = findViewById(R.id.links_edit_text);
         skillsEditText = findViewById(R.id.skills_edit_text);
 
-        nameEditText.setText("utkarsh");
+        userProfilePic = findViewById(R.id.user_profile_pic);
+        userProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, Uri.parse(imageUri));
+                startActivityForResult(intent, 1);
+            }
+        });
+
+//        nameEditText.setText("utkarsh");
 //        emailEditText.setText("utka@gmail.com");
-        mobileEditText.setText("9876543210");
-        locationEditText.setText("Vellore");
-        linksEditText.setText("www.google.com");
-        skillsEditText.setText("Android app dev");
+//        mobileEditText.setText("9876543210");
+//        locationEditText.setText("Vellore");
+//        linksEditText.setText("www.google.com");
+//        skillsEditText.setText("Android app dev");
 
         userService = APIUtils.getUserService();
 
@@ -65,12 +98,14 @@ public class PersonalDetailsActivity extends AppCompatActivity {
         else {
             getSupportActionBar().setTitle("Edit Personal Details");
             getPersonalDetails();
+            getProfilePic();
         }
 
         saveButton = findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 name = nameEditText.getText().toString().trim();
                 email = "";//emailEditText.getText().toString().trim();
                 mobile = mobileEditText.getText().toString().trim();
@@ -84,9 +119,29 @@ public class PersonalDetailsActivity extends AppCompatActivity {
                     setPersonalDetails(personalDetails);
                 else {
                     updatePersonalDetails(personalDetails);
+
                 }
+                setProfilePic(encodedImage);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == 1)
+        {
+            Uri uri = data.getData();
+            userProfilePic.setImageURI(uri);
+
+            String picturePath = getPath(this, uri);
+
+            profilePicBitmap = BitmapFactory.decodeFile(picturePath);
+            baos = new ByteArrayOutputStream();
+            profilePicBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            imageByteArray = baos.toByteArray();
+            encodedImage = Base64.encodeToString(imageByteArray, Base64.DEFAULT);
+        }
     }
 
     public void getPersonalDetails()
@@ -153,6 +208,63 @@ public class PersonalDetailsActivity extends AppCompatActivity {
                 showToast("Update Personal details Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void getProfilePic()
+    {
+        Uri uri = Uri.parse(imageUrl + userId);
+        Picasso.with(getApplicationContext()).load(uri).into(userProfilePic);
+//        Call<byte[]> call = userService.getProfilePic(userId);
+//        showToast(userId + "", Toast.LENGTH_SHORT);
+//        call.enqueue(new Callback<byte[]>() {
+//            @Override
+//            public void onResponse(Call<byte[]> call, Response<byte[]> response) {
+//                byte[] decodedString = Base64.decode(response.body(), Base64.DEFAULT);
+//                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                userProfilePic.setImageBitmap(decodedByte);
+//                showToast(String.valueOf(decodedString), Toast.LENGTH_SHORT);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<byte[]> call, Throwable t) {
+//                showToast("Get Profile Pic Failed: \n" + t.getMessage(), Toast.LENGTH_LONG);
+//                Log.i("PersonalDetailsActivity", t.getMessage());
+//            }
+//        });
+    }
+
+    public void setProfilePic(String encodedImage)
+    {
+        Photo photo = new Photo(String.valueOf(userId), encodedImage);
+        Call<StatusMessage> call = userService.setProfilePic(photo);
+        call.enqueue(new Callback<StatusMessage>() {
+            @Override
+            public void onResponse(Call<StatusMessage> call, Response<StatusMessage> response) {
+                showToast("Profile pic set successfully", Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void onFailure(Call<StatusMessage> call, Throwable t) {
+                showToast("Update Personal details Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    public static String getPath(Context context, Uri uri ) {
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if ( cursor.moveToFirst( ) ) {
+                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
+                result = cursor.getString( column_index );
+            }
+            cursor.close( );
+        }
+        if(result == null) {
+            result = "Not found";
+        }
+        return result;
     }
 
 

@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -18,6 +20,9 @@ import com.sparksfoundation.mycredible.Remote.UserService;
 import com.sparksfoundation.mycredible.UserHomeActivity;
 
 import java.security.CodeSigner;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import okio.DeflaterSink;
 import retrofit2.Call;
@@ -31,6 +36,8 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
     Button saveButton;
     EditText organizationEditText, designationEditText;
     Spinner startMonthSpinner, startYearSpinner, endMonthSpinner, endYearSpinner;
+    CheckBox currWorkCheckBox;
+    LinearLayout endLinearLayout;
     String organization, designation;
     String startMonth, startYear, endMonth, endYear;
     String startDate, endDate;
@@ -50,14 +57,30 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
         startYearSpinner = findViewById(R.id.start_year_spinner);
         endMonthSpinner = findViewById(R.id.end_month_spinner);
         endYearSpinner = findViewById(R.id.end_year_spinner);
+        endLinearLayout = findViewById(R.id.end_date_linear_layout);
+
+        currWorkCheckBox = findViewById(R.id.curr_work_check_box);
+        currWorkCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currWorkCheckBox.isChecked())
+                {
+                    endLinearLayout.setVisibility(View.GONE);
+                }
+                else if(!currWorkCheckBox.isChecked())
+                {
+                    endLinearLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         userService = APIUtils.getUserService();
 
         SharedPreferences prefs = getSharedPreferences(MY_PREF, MODE_PRIVATE);
         userId = prefs.getInt("id", 0);
 
-        organizationEditText.setText("VIT");
-        designationEditText.setText("Student");
+//        organizationEditText.setText("VIT");
+//        designationEditText.setText("Student");
 
         final String isUpdate = getIntent().getStringExtra("isUpdate");
 
@@ -76,8 +99,16 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
                 designation = designationEditText.getText().toString().trim();
                 startMonth = startMonthSpinner.getSelectedItem().toString();
                 startYear = startYearSpinner.getSelectedItem().toString();
-                endMonth = endMonthSpinner.getSelectedItem().toString();
-                endYear = endYearSpinner.getSelectedItem().toString();
+                if(currWorkCheckBox.isChecked())
+                {
+                    endMonth = endMonthSpinner.getItemAtPosition(Integer.parseInt(getDate().substring(3, 5)) - 1).toString();
+                    endYear = getDate().substring(6);
+                }
+                else if(!currWorkCheckBox.isChecked())
+                {
+                    endMonth = endMonthSpinner.getSelectedItem().toString();
+                    endYear = endYearSpinner.getSelectedItem().toString();
+                }
 
                 startDate = startMonth + ", " + startYear;
                 endDate = endMonth + ", " + endYear;
@@ -160,12 +191,18 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
     }
 
     private int getIndex(Spinner spinner, String myString){
-        for (int i=0;i<spinner.getCount();i++){
+        for (int i = 0; i < spinner.getCount(); i++){
             if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
                 return i;
             }
         }
         return 0;
+    }
+
+    private String getDate(){
+        DateFormat dfDate = new SimpleDateFormat("dd/MM/yyyy");
+        String date = dfDate.format(Calendar.getInstance().getTime());
+        return date;
     }
 
     public void showToast(String msg, int length)

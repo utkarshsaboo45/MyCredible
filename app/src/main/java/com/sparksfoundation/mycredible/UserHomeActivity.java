@@ -3,6 +3,7 @@ package com.sparksfoundation.mycredible;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses.PersonalDetail
 import com.sparksfoundation.mycredible.ProfessionalDetailsPOJOClasses.ProfessionalDetailsData;
 import com.sparksfoundation.mycredible.Remote.APIUtils;
 import com.sparksfoundation.mycredible.Remote.UserService;
+import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,9 +30,13 @@ import static com.sparksfoundation.mycredible.LoginActivity.MY_PREF;
 
 public class UserHomeActivity extends AppCompatActivity {
 
+    final private String imageUrl = "http://139.59.65.145:9090/user/personaldetail/profilepic/";
+
     private ViewPager mViewPager;
 
     private TextView nameTextView, emailTextView, organizationTextView, locationTextView;
+
+    private ImageView userProfilePic;
 
     private String name, email, organization, location;
 
@@ -46,6 +53,8 @@ public class UserHomeActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.email_text_view);
         organizationTextView = findViewById(R.id.organization_text_view);
         locationTextView = findViewById(R.id.location_text_view);
+
+        userProfilePic = findViewById(R.id.user_profile_pic);
 
         name = email = organization = location = "";
 
@@ -65,6 +74,7 @@ public class UserHomeActivity extends AppCompatActivity {
 
         userService = APIUtils.getUserService();
 
+        getProfilePic();
         getPersonalDetails();
         getProfessionalDetails();
     }
@@ -91,6 +101,11 @@ public class UserHomeActivity extends AppCompatActivity {
                 finish();
                 startActivity(new Intent(UserHomeActivity.this, LoginActivity.class));
                 return true;
+            case R.id.delete_account_menu:
+                deleteAccount();
+                finish();
+                Intent intent = new Intent(UserHomeActivity.this, LoginActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -136,6 +151,50 @@ public class UserHomeActivity extends AppCompatActivity {
                 showToast("Response Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
             }
         });
+    }
+
+    public void deleteAccount()
+    {
+        deleteProfessionalData();
+        deleteEducationData();
+        showToast("Account deleted successfully!", Toast.LENGTH_SHORT);
+        showToast(getString(R.string.login_or_signup_message), Toast.LENGTH_SHORT);
+    }
+
+    public void deleteProfessionalData()
+    {
+        Call<StatusMessage> call = userService.deleteProfessionalDetails(userId);
+        call.enqueue(new Callback<StatusMessage>() {
+            @Override
+            public void onResponse(Call<StatusMessage> call, Response<StatusMessage> response) {
+
+            }
+            @Override
+            public void onFailure(Call<StatusMessage> call, Throwable t) {
+                showToast("Delete Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    public void deleteEducationData()
+    {
+        Call<StatusMessage> call = userService.deleteEducationalDetails(userId);
+        call.enqueue(new Callback<StatusMessage>() {
+            @Override
+            public void onResponse(Call<StatusMessage> call, Response<StatusMessage> response) {
+
+            }
+            @Override
+            public void onFailure(Call<StatusMessage> call, Throwable t) {
+                showToast("Delete Failed: " + t.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
+    }
+
+    public void getProfilePic()
+    {
+        Uri uri = Uri.parse(imageUrl + userId);
+        Picasso.with(getApplicationContext()).load(uri).into(userProfilePic);
     }
 
     public void showToast(String msg, int length)

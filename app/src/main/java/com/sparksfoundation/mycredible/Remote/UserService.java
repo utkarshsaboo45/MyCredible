@@ -9,6 +9,7 @@ import com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses.PersonalDetail
 import com.sparksfoundation.mycredible.PersonalDetailsPOJOClasses.PersonalDetailsData;
 import com.sparksfoundation.mycredible.ProfessionalDetailsPOJOClasses.ProfessionalDetails;
 import com.sparksfoundation.mycredible.ProfessionalDetailsPOJOClasses.ProfessionalDetailsData;
+import com.sparksfoundation.mycredible.ProfilePicPOJOClasses.Photo;
 import com.sparksfoundation.mycredible.StatusMessage;
 
 import retrofit2.Call;
@@ -39,11 +40,14 @@ public interface UserService {
     @PUT("user/personaldetail/{id}")
     Call<PersonalDetailsData> updatePersonalDetails(@Path("id") int id, @Body PersonalDetails personalDetails);
 
-//    @GET("user/personaldetail/profilepic/{id}")
+    @GET("user/personaldetail/profilepic/{id}")
+    Call<byte[]> getProfilePic(@Path("id") int id);
 
 //    @POST("user/personaldetail/profilepic")
+//    Call<StatusMessage> setProfilePic(String photo, int id);
 
-//    @POST("user/personaldetail/pp/post")
+    @POST("user/personaldetail/pp/post")
+    Call<StatusMessage> setProfilePic(@Body Photo photo);
 
     @GET("user/educationdetail/{id}")
     Call<EducationDetailsData> getEducationalDetails(@Path("id") int id);

@@ -5,4 +5,9 @@
         android:id="@+id/sign_out_menu"
         android:title="@string/action_logout"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/delete_account_menu"
+        android:title="@string/action_delete_account"
+        app:showAsAction="never"/>
 </menu>

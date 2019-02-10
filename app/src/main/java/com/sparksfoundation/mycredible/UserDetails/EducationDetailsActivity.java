@@ -50,9 +50,9 @@ public class EducationDetailsActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(MY_PREF, MODE_PRIVATE);
         userId = prefs.getInt("id", 0);
 
-        organizationEditText.setText("VIT");
-        degreeEditText.setText("B. Tech");
-        locationEditText.setText("Vellore");
+//        organizationEditText.setText("VIT");
+//        degreeEditText.setText("B. Tech");
+//        locationEditText.setText("Vellore");
 
         userService = APIUtils.getUserService();
 

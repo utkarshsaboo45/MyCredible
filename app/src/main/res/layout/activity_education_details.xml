@@ -77,12 +77,6 @@
                 android:prompt="@string/yyyy"
                 android:layout_margin="16dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="@string/educational_details" />
-
         </LinearLayout>
 
     </ScrollView>

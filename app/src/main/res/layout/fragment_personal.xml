@@ -69,9 +69,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_update_details"
-                android:layout_margin="24dp"
+                android:layout_margin="48dp"
                 android:padding="16dp"
-                android:layout_gravity="center"
+                android:layout_gravity="bottom|center"
                 android:background="@drawable/my_button"/>
         </LinearLayout>
 

@@ -40,7 +40,6 @@ public class EducationFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,9 +77,11 @@ public class EducationFragment extends Fragment {
         call.enqueue(new Callback<EducationDetailsData>() {
             @Override
             public void onResponse(Call<EducationDetailsData> call, Response<EducationDetailsData> response) {
-                organizationTextView.setText(response.body().getData().getOrganisation());
-                degreeTextView.setText(response.body().getData().getDegree());
-                locationTextView.setText(response.body().getData().getLocation());
+                if(response.body() != null) {
+                    organizationTextView.setText(response.body().getData().getOrganisation());
+                    degreeTextView.setText(response.body().getData().getDegree());
+                    locationTextView.setText(response.body().getData().getLocation());
+                }
             }
 
             @Override
